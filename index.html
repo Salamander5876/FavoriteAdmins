@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🛒 АНИМЕТОП 90s RETRO SHOP 🛒 - SQL-Квест</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <style>
+        body {
+    font-family: 'Courier New', monospace;
+    line-height: 1.6;
+    margin: 0;
+    padding: 0;
+    /* Мягкие пастельные цвета */
+    background: linear-gradient(45deg, #A88BEB, #F8CEEC, #B7E4F2, #A88BEB);
+    background-size: 400% 400%;
+    animation: neonGlow 20s ease infinite;
+    color: #000;
+    image-rendering: pixelated;
+}
+        @keyframes neonGlow {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        header {
+            background: rgba(0, 0, 0, 0.8);
+            color: #00FFFF;
+            padding: 20px;
+            text-align: center;
+            border-bottom: 4px solid #FF00FF;
+            text-shadow: 2px 2px #000;
+            font-family: 'Press Start 2P', cursive;
+        }
+        header p {
+            color: #FFFF00; /* Цвет "SQL-Квест" */
+        }
+        h1 {
+            font-size: 1.8em;
+            margin: 0;
+            text-transform: uppercase;
+        }
+        h2 {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 1.2em;
+            color: #FF00FF;
+            text-shadow: 1px 1px #000;
+            border-bottom: 2px solid #00FFFF;
+            padding-bottom: 5px;
+        }
+        nav {
+            background: rgba(0, 0, 0, 0.9);
+            padding: 10px;
+            border-bottom: 2px solid #FFFF00;
+        }
+        nav ul {
+            list-style: none;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        nav li {
+            margin: 0 10px;
+        }
+        nav a {
+            color: #FFFF00;
+            text-decoration: none;
+            font-size: 0.9em;
+            font-family: 'Press Start 2P', cursive;
+            border: 2px solid #00FFFF;
+            padding: 5px 10px;
+            display: inline-block;
+            transition: background 0.3s;
+        }
+        nav a:hover {
+            background: #00FFFF;
+            color: #000;
+        }
+        main {
+            max-width: 900px;
+            margin: 20px auto;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            border: 3px double #000;
+            box-shadow: 0 0 15px #FF00FF;
+        }
+        section {
+            margin-bottom: 30px;
+            padding: 15px;
+            border: 2px solid #000;
+            background: rgba(255, 255, 255, 0.9);
+        }
+        p, li {
+            font-size: 1em;
+            color: #000;
+        }
+        .hint {
+            background: rgba(0, 255, 255, 0.2);
+            border-left: 4px solid #00FFFF;
+            padding: 10px;
+            margin: 10px 0;
+            font-size: 0.9em;
+        }
+        code {
+            background: #000;
+            color: #00FFFF;
+            padding: 2px 5px;
+            font-size: 0.9em;
+            border: 1px solid #FFFF00;
+        }
+        pre {
+            background: #000;
+            color: #00FFFF;
+            padding: 15px;
+            border: 2px solid #FF00FF;
+            max-height: 300px;
+            overflow-y: auto;
+            font-size: 0.9em;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        .task {
+            background: rgba(255, 0, 255, 0.1);
+            border: 1px solid #FF00FF;
+            padding: 10px;
+            margin: 10px 0;
+            font-size: 0.9em;
+        }
+        .er-diagram {
+            border: 2px solid #FF00FF;
+            box-shadow: 0 0 15px #FF00FF;
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 10px auto;
+        }
+        .logic {
+            background: rgba(255, 165, 0, 0.2);
+            border-left: 4px solid #FFA500;
+            padding: 10px;
+            margin: 10px 0;
+            font-size: 0.9em;
+        }
+        footer {
+            text-align: center;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.9);
+            color: #FFFF00;
+            border-top: 4px solid #00FFFF;
+            font-size: 0.8em;
+        }
+        #motto-text {
+            position: fixed;
+            bottom: 330px;
+            right: 20px;
+            color: #FFF;
+            background: rgba(0,0,0,0.7);
+            padding: 10px;
+            border-radius: 10px;
+            z-index: 1000;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.8em;
+            max-width: 200px;
+            text-align: center;
+            border: 2px solid #FF00FF;
+            box-shadow: 0 0 10px #00FFFF;
+            opacity: 0;
+            transition: opacity 0.5s;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>🛒 АНИМЕТОП 90s RETRO SHOP 🛒</h1>
+        <p>SQL-Квест: Анализ мерча по топ-аниме! Готовьтесь к AnimeFest 2025!</p>
+    </header>
+
+    <nav>
+        <ul>
+            <li><a href="#intro">Введение</a></li>
+            <li><a href="#setup">Настройка БД</a></li>
+            <li><a href="#warmup">Разминка</a></li>
+            <li><a href="#easy">Простые запросы</a></li>
+            <li><a href="#medium">Средний уровень</a></li>
+            <li><a href="#hard">Продвинутый уровень</a></li>
+            <li><a href="#final">Финальный квест</a></li>
+            <li><a href="#summary">Итоги</a></li>
+        </ul>
+    </nav>
+
+    <main>
+        <section id="intro">
+            <h2>🎮 Введение в Ретро-Квест</h2>
+            <p>Йо, зумеры! Это "АнимеТоп" — ретро-магазин в стиле 90-х с неоновыми вывесками и пиксельным вайбом. Вы анализируете мерч по топ-аниме (фигурки, манга, брелки) и спасаете AnimeFest 2025 от провала! Мы начнем с основ SQL — не бойтесь, если забыли всё, мы разберем всё с нуля!</p>
+            <div class="hint">
+                <strong>Правила игры:</strong> Работайте в группах по 2-3. Очки: 10/20/30 за запрос. Победители — "S-Rank Отаку" с ретро-призами! Используйте SQLite.
+            </div>
+            <p><strong>Что нужно:</strong> Установите SQLite (<a href="https://www.sqlite.org/download.html" target="_blank">sqlite.org</a>) или используйте онлайн-версию (<a href="https://sqliteonline.com" target="_blank">sqliteonline.com</a>).</p>
+        </section>
+
+        <section id="setup">
+            <h2>💾 Настройка Ретро-Базы</h2>
+            <p>Создайте базу данных магазина в DB Browser for SQLite. Скопируйте код в SQL.</p>
+            <div class="hint">
+                <strong>Как запустить:</strong><br>
+                1. Откройте DB Browser for SQLite.<br>
+                2. Создайте новую базу (например, <code>anime_top100.db</code>).<br>
+                3. Вставьте код ниже и нажмите "Выполнить".<br>
+                4. Проверьте: попробуйте <code>SELECT * FROM animes LIMIT 5;</code> (покажет 5 товаров).
+            </div>
+            <h3>Структура таблиц</h3>
+            <ul>
+                <li><strong>genres</strong>: genre_id, genre_name (12 жанров: Сёнен, Сейнен и т.д.)</li>
+                <li><strong>animes</strong>: id, name (21 товар по топ-аниме), genre_id, release_year, price (руб.), stock</li>
+                <li><strong>customers</strong>: customer_id, name (ваши одногруппники!), email, country (Россия)</li>
+                <li><strong>orders</strong>: order_id, anime_id, customer_id, order_date (2025), quantity (31 заказ)</li>
+            </ul>
+            <h3>ER-Диаграмма базы данных</h3>
+            <p>Вот визуальная схема таблиц и связей — используй, чтобы понять, как данные связаны!</p>
+            <img src="ER.png" alt="ER Диаграмма базы данных" class="er-diagram">
+            <h3>SQL-Скрипт</h3>
+            <pre><code>-- SQLite Script: АнимеТоп Ретро-Магазин 90-х (Топ-20 Аниме, Русский)
+-- Создание таблицы жанров
+CREATE TABLE genres (
+    genre_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    genre_name TEXT NOT NULL
+);
+
+-- Добавление жанров
+INSERT INTO genres (genre_name) VALUES ('Сёнен');
+INSERT INTO genres (genre_name) VALUES ('Сёдзё');
+INSERT INTO genres (genre_name) VALUES ('Сейнен');
+INSERT INTO genres (genre_name) VALUES ('Исекай');
+INSERT INTO genres (genre_name) VALUES ('Романтика');
+INSERT INTO genres (genre_name) VALUES ('Фэнтези');
+INSERT INTO genres (genre_name) VALUES ('Меха');
+INSERT INTO genres (genre_name) VALUES ('Спорт');
+INSERT INTO genres (genre_name) VALUES ('Ужасы');
+INSERT INTO genres (genre_name) VALUES ('Комедия');
+INSERT INTO genres (genre_name) VALUES ('Драма');
+INSERT INTO genres (genre_name) VALUES ('Слайс-оф-лайф');
+
+-- Создание таблицы мерча (21 товар)
+CREATE TABLE animes (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL,
+    genre_id INTEGER,
+    release_year INTEGER,
+    price REAL,
+    stock INTEGER,
+    FOREIGN KEY (genre_id) REFERENCES genres (genre_id)
+);
+
+-- Добавление мерча по топ-аниме
+INSERT INTO animes (name, genre_id, release_year, price, stock) VALUES ('Фигурка Атака титанов', 1, 2013, 3500.00, 15);
+INSERT INTO animes (name, genre_id, release_year, price, stock) VALUES ('Постер Моя геройская академия', 1, 2016, 900.00, 30);
+INSERT INTO animes (name, genre_id, release_year, price, stock) VALUES ('Тетрадь смерти', 3, 2006, 1500.00, 10);
+INSERT INTO animes (name, genre_id, release_year, price, stock) VALUES ('Кукла Сейлор Мун', 2, 1992, 2500.00, 12);
+INSERT INTO animes (name, genre_id, release_year, price, stock) VALUES ('Брелок Ре:Зеро', 4, 2016, 500.00, 40);
+INSERT INTO animes (name, genre_id, release_year, price, stock) VALUES ('Манга Твое имя', 5, 2016, 800.00, 20);
+INSERT INTO animes (name, genre_id, release_year, price, stock) VALUES ('Фигурка Ван Пис', 1, 1999, 4000.00, 10);
+INSERT INTO animes (name, genre_id, release_year, price, stock) VALUES ('Плюшевая игрушка Евангелион', 7, 1995, 2000.00, 8);
+INSERT INTO animes (name, genre_id, release_year, price, stock) VALUES ('Постер Кей-Он!', 12, 2009, 1000.00, 25);
+INSERT INTO animes (name, genre_id, release_year, price, stock) VALUES ('Книга Стальной алхимик', 3, 2009, 1800.00, 15);
+INSERT INTO animes (name, genre_id, release_year, price, stock) VALUES ('Фигурка Наруто', 1, 2002, 3200.00, 18);
+INSERT INTO animes (name, genre_id, release_year, price, stock) VALUES ('Постер Ковбой Бибоп', 3, 1998, 1200.00, 22);
+INSERT INTO animes (name, genre_id, release_year, price, stock) VALUES ('Брелок Истребитель демонов', 1, 2019, 600.00, 35);
+INSERT INTO animes (name, genre_id, release_year, price, stock) VALUES ('Манга Блич', 1, 2004, 950.00, 16);
+INSERT INTO animes (name, genre_id, release_year, price, stock) VALUES ('Фигурка Охотник х Охотник', 1, 2011, 2800.00, 14);
+INSERT INTO animes (name, genre_id, release_year, price, stock) VALUES ('Постер Врата Штейна', 3, 2011, 1100.00, 28);
+INSERT INTO animes (name, genre_id, release_year, price, stock) VALUES ('Кукла Сага о Винланде', 3, 2019, 2600.00, 11);
+INSERT INTO animes (name, genre_id, release_year, price, stock) VALUES ('Брелок Токийские мстители', 1, 2021, 700.00, 32);
+INSERT INTO animes (name, genre_id, release_year, price, stock) VALUES ('Манга Магическая битва', 1, 2020, 850.00, 19);
+INSERT INTO animes (name, genre_id, release_year, price, stock) VALUES ('Фигурка Берсерк', 3, 1997, 3800.00, 9);
+INSERT INTO animes (name, genre_id, release_year, price, stock) VALUES ('Постер Монстр', 3, 2004, 1300.00, 24);
+
+-- Создание таблицы клиентов (18 студентов)
+CREATE TABLE customers (
+    customer_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL,
+    email TEXT NOT NULL,
+    country TEXT
+);
+
+-- Добавление клиентов (все из России)
+INSERT INTO customers (name, email, country) VALUES ('Митусов Артём', 'artem.mitusov@example.com', 'Россия');
+INSERT INTO customers (name, email, country) VALUES ('Антропов Иван', 'ivan.antropov@example.com', 'Россия');
+INSERT INTO customers (name, email, country) VALUES ('Баранов Андрей', 'andrey.baranov@example.com', 'Россия');
+INSERT INTO customers (name, email, country) VALUES ('Барахоев Иван', 'ivan.barahoev@example.com', 'Россия');
+INSERT INTO customers (name, email, country) VALUES ('Бородин Алексей', 'alexey.borodin@example.com', 'Россия');
+INSERT INTO customers (name, email, country) VALUES ('Дьячкова Кристина', 'kristina.dyachkova@example.com', 'Россия');
+INSERT INTO customers (name, email, country) VALUES ('Мокина Екатерина', 'ekaterina.mokina@example.com', 'Россия');
+INSERT INTO customers (name, email, country) VALUES ('Петров Кирилл', 'kirill.petrov@example.com', 'Россия');
+INSERT INTO customers (name, email, country) VALUES ('Подкорытов Алексей', 'alexey.podkorytov@example.com', 'Россия');
+INSERT INTO customers (name, email, country) VALUES ('Прохорова Снежана', 'snezana.prokhorova@example.com', 'Россия');
+INSERT INTO customers (name, email, country) VALUES ('Пустынцева Диана', 'diana.pustyntseva@example.com', 'Россия');
+INSERT INTO customers (name, email, country) VALUES ('Сизиков Дмитрий', 'dmitriy.sizikov@example.com', 'Россия');
+INSERT INTO customers (name, email, country) VALUES ('Сумароков Анатолий', 'anatoliy.sumarokov@example.com', 'Россия');
+INSERT INTO customers (name, email, country) VALUES ('Иванов Константин', 'konstantin.ivanov@example.com', 'Россия');
+INSERT INTO customers (name, email, country) VALUES ('Иняев Александр', 'alexandr.inyaev@example.com', 'Россия');
+INSERT INTO customers (name, email, country) VALUES ('Шилов Дмитрий', 'dmitriy.shilov@example.com', 'Россия');
+INSERT INTO customers (name, genre_id, release_year, price, stock) VALUES ('Князев Семён', 'semyon.kniazev@example.com', 'Россия');
+INSERT INTO customers (name, genre_id, release_year, price, stock) VALUES ('Овчинников Андрей', 'andrey.ovchinnikov@example.com', 'Россия');
+-- Создание таблицы заказов (31 заказ)
+CREATE TABLE orders (
+    order_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    anime_id INTEGER,
+    customer_id INTEGER,
+    order_date DATE,
+    quantity INTEGER,
+    FOREIGN KEY (anime_id) REFERENCES animes (id),
+    FOREIGN KEY (customer_id) REFERENCES customers (customer_id)
+);
+-- Добавление заказов (исправлено: customer_id до 18)
+INSERT INTO orders (anime_id, customer_id, order_date, quantity) VALUES (1, 1, '2025-01-10', 2);
+INSERT INTO orders (anime_id, customer_id, order_date, quantity) VALUES (2, 2, '2025-02-15', 1);
+INSERT INTO orders (anime_id, customer_id, order_date, quantity) VALUES (3, 3, '2025-03-01', 3);
+INSERT INTO orders (anime_id, customer_id, order_date, quantity) VALUES (4, 4, '2025-01-25', 1);
+INSERT INTO orders (anime_id, customer_id, order_date, quantity) VALUES (5, 5, '2025-02-20', 2);
+INSERT INTO orders (anime_id, customer_id, order_date, quantity) VALUES (6, 6, '2025-03-10', 1);
+INSERT INTO orders (anime_id, customer_id, order_date, quantity) VALUES (7, 7, '2025-02-05', 2);
+INSERT INTO orders (anime_id, customer_id, order_date, quantity) VALUES (8, 8, '2025-01-15', 1);
+INSERT INTO orders (anime_id, customer_id, order_date, quantity) VALUES (9, 9, '2025-03-05', 2);
+INSERT INTO orders (anime_id, customer_id, order_date, quantity) VALUES (10, 10, '2025-02-25', 1);
+INSERT INTO orders (anime_id, customer_id, order_date, quantity) VALUES (11, 11, '2025-01-30', 3);
+INSERT INTO orders (anime_id, customer_id, order_date, quantity) VALUES (12, 12, '2025-03-15', 1);
+INSERT INTO orders (anime_id, customer_id, order_date, quantity) VALUES (13, 13, '2025-02-10', 2);
+INSERT INTO orders (anime_id, customer_id, order_date, quantity) VALUES (14, 14, '2025-01-20', 1);
+INSERT INTO orders (anime_id, customer_id, order_date, quantity) VALUES (15, 15, '2025-03-20', 4);
+INSERT INTO orders (anime_id, customer_id, order_date, quantity) VALUES (16, 16, '2025-02-28', 1);
+INSERT INTO orders (anime_id, customer_id, order_date, quantity) VALUES (17, 17, '2025-01-05', 2);
+INSERT INTO orders (anime_id, customer_id, order_date, quantity) VALUES (18, 18, '2025-03-12', 1);
+INSERT INTO orders (anime_id, customer_id, order_date, quantity) VALUES (19, 18, '2025-02-18', 3);
+INSERT INTO orders (anime_id, customer_id, order_date, quantity) VALUES (20, 1, '2025-01-12', 1);
+INSERT INTO orders (anime_id, customer_id, order_date, quantity) VALUES (21, 2, '2025-03-08', 2);
+INSERT INTO orders (anime_id, customer_id, order_date, quantity) VALUES (1, 3, '2025-02-02', 1);
+INSERT INTO orders (anime_id, customer_id, order_date, quantity) VALUES (2, 4, '2025-01-28', 2);
+INSERT INTO orders (anime_id, customer_id, order_date, quantity) VALUES (3, 5, '2025-03-22', 1);
+INSERT INTO orders (anime_id, customer_id, order_date, quantity) VALUES (4, 6, '2025-02-12', 3);
+INSERT INTO orders (anime_id, customer_id, order_date, quantity) VALUES (5, 7, '2025-01-18', 1);
+INSERT INTO orders (anime_id, customer_id, order_date, quantity) VALUES (6, 8, '2025-03-03', 2);
+INSERT INTO orders (anime_id, customer_id, order_date, quantity) VALUES (7, 9, '2025-02-22', 1);
+INSERT INTO orders (anime_id, customer_id, order_date, quantity) VALUES (8, 10, '2025-01-08', 2);
+INSERT INTO orders (anime_id, customer_id, order_date, quantity) VALUES (9, 11, '2025-03-18', 1);
+INSERT INTO orders (anime_id, customer_id, order_date, quantity) VALUES (10, 12, '2025-02-08', 3);
+</code></pre>
+        </section>
+
+        <section id="warmup">
+            <h2>🎯 Разминка (5 мин)</h2>
+            <p>Обсудите в группе: Какое аниме из топа ваше любимое? "Наруто" или "Твое имя"?</p>
+            <div class="hint">
+                <strong>Цель:</strong> Попробуйте посмотреть все жанры! Начните с команды <code>SELECT * FROM genres;</code> — она покажет всё из таблицы <code>genres</code>.
+            </div>
+        </section>
+
+        <section id="easy">
+            <h2>🕹️ Простые запросы (10 мин)</h2>
+            <p>Давайте учиться выбирать данные! Каждое задание — 10 очков. Проверяйте в SQLite.</p>
+            <div class="logic">
+                <strong>Как строить запросы:</strong><br>
+                1. **SELECT**: Говорим, что хотим увидеть (например, имя или цену). Пишите колонки, которые нужны.<br>
+                2. **FROM**: Указываем таблицу, откуда берём данные (например, <code>animes</code>).<br>
+                3. **WHERE** (если нужно): Фильтруем данные, как сито (например, только товары дешевле 1000).<br>
+                Это как заказ в магазине: "Дай мне (SELECT) все цены (FROM animes), где цена меньше 1000 (WHERE)".
+            </div>
+            <div class="task">
+                <strong>Задание 1:</strong> Найдите названия всех товаров.
+                <div class="hint">
+                    <strong>Подсказка:</strong> Используйте <code>SELECT</code> для выбора названий и <code>FROM animes</code> для таблицы. Попробуйте <code>SELECT name FROM animes;</code>!
+                </div>
+            </div>
+            <div class="task">
+                <strong>Задание 2:</strong> Найдите названия товаров, где цена меньше 1000 рублей.
+                <div class="hint">
+                    <strong>Подсказка:</strong> Начните с <code>SELECT name FROM animes</code>, а затем добавьте <code>WHERE price < 1000</code> для фильтрации.
+                </div>
+            </div>
+            <div class="task">
+                <strong>Задание 3:</strong> Найдите имена всех клиентов.
+                <div class="hint">
+                    <strong>Подсказка:</strong> смотри задание 1.
+                </div>
+            </div>
+            <div class="hint">
+                <strong>Общее напоминание:</strong> Если что-то не работает, проверьте, правильно ли написаны имена колонок и таблиц. Попробуйте <code>SELECT * FROM animes</code>, чтобы увидеть всё и вспомнить структуру!
+            </div>
+        </section>
+
+        <section id="medium">
+            <h2>⚡ Средний уровень: Соединяем таблицы (15 мин)</h2>
+            <p>Теперь учимся связывать таблицы! Каждое задание — 20 очков.</p>
+            <div class="logic">
+                <strong>Как строить запросы с JOIN:</strong><br>
+                1. **SELECT**: Выбираем, что хотим увидеть (например, имя клиента и название товара).<br>
+                2. **FROM**: Указываем первую таблицу (например, <code>orders</code>).<br>
+                3. **JOIN**: Добавляем вторую таблицу (например, <code>JOIN customers ON orders.customer_id = customers.customer_id</code>) — это как "соединяем по ключу", чтобы найти совпадения.<br>
+                4. **WHERE** (если нужно): Фильтруем результат.<br>
+                Представь: "Дай мне (SELECT) имена (FROM customers) и их заказы (JOIN orders по customer_id), где имя — 'Митусов Артём' (WHERE)".
+            </div>
+            <div class="task">
+                <strong>Задание 1:</strong> Найдите имя клиента и дату его заказа.
+                <div class="hint">
+                    <strong>Подсказка:</strong> Начни с <code>SELECT name, order_date</code>. Используй <code>FROM orders</code> и добавь <code>JOIN customers ON orders.customer_id = customers.customer_id</code>.
+                </div>
+            </div>
+            <div class="task">
+                <strong>Задание 2:</strong> Найдите название товара и его жанр.
+                <div class="hint">
+                    <strong>Подсказка:</strong> Начни с <code>SELECT name, genre_name</code>. Используй <code>FROM animes</code> и добавь <code>JOIN genres ON animes.genre_id = genres.genre_id</code>.
+                </div>
+            </div>
+            <div class="task">
+                <strong>Задание 3:</strong> Найдите название товара, заказанного в январе 2025.
+                <div class="hint">
+                    <strong>Подсказка:</strong> Начни с <code>SELECT name, order_date</code>. Используй <code>FROM animes</code> и <code>JOIN orders ON animes.id = orders.anime_id</code>, а затем добавь <code>WHERE order_date LIKE '2025-01%'</code> (это фильтр для января).
+                </div>
+            </div>
+            <div class="hint">
+                <strong>Общее напоминание:</strong> Если JOIN не работает, проверь ключи (например, customer_id). Попробуй <code>SELECT * FROM orders JOIN customers</code> без условий, чтобы увидеть, как таблицы соединяются!
+            </div>
+        </section>
+
+        <section id="hard">
+            <h2>🔥 Продвинутый уровень: Подсчеты (15 мин)</h2>
+            <p>Учимся считать данные! Каждое задание — 30 очков.</p>
+            <div class="logic">
+                <strong>Как строить запросы с подсчетами:</strong><br>
+                1. **SELECT**: Выбираем данные и функцию, например, <code>COUNT(*)</code> для подсчета строк.<br>
+                2. **FROM**: Указываем таблицу (например, <code>animes</code>).<br>
+                3. **JOIN** (если нужно): Соединяем таблицы.<br>
+                4. **GROUP BY**: Группируем данные (например, по жанру), чтобы подсчет шел по группам.<br>
+                5. **WHERE** (если нужно): Фильтруем перед подсчетом.<br>
+                Это как: "Посчитай (COUNT) товары (FROM animes) по жанрам (GROUP BY genre_id)".
+            </div>
+            <div class="task">
+                <strong>Задание 1:</strong> Посчитай, сколько всего товаров в таблице.
+                <div class="hint">
+                    <strong>Подсказка:</strong> Используй <code>SELECT COUNT(*) FROM animes</code>. Это самый простой подсчет!
+                </div>
+            </div>
+            <div class="task">
+                <strong>Задание 2:</strong> Посчитай, сколько товаров в каждом жанре.
+                <div class="hint">
+                    <strong>Подсказка:</strong> Начни с <code>SELECT genre_name, COUNT(*)</code>, используй <code>FROM animes JOIN genres ON animes.genre_id = genres.genre_id</code>, и добавь <code>GROUP BY genre_name</code>.
+                </div>
+            </div>
+            <div class="task">
+                <strong>Задание 3:</strong> Найди общее количество заказов.
+                <div class="hint">
+                    <strong>Подсказка:</strong> Используй <code>SELECT COUNT(*) FROM orders</code>. Это тоже простой подсчет!
+                </div>
+            </div>
+            <div class="hint">
+                <strong>Общее напоминание:</strong> Если GROUP BY дает ошибку, проверь, что все колонки в SELECT либо сгруппированы, либо агрегированы (например, COUNT). Попробуй без WHERE сначала!
+            </div>
+        </section>
+
+        <section id="final">
+            <h2>🏆 Финальный квест (10 мин)</h2>
+            <p>Придумай свой запрос! Например, найди товары жанра "Сёнен" дешевле 2000 рублей.</p>
+            <div class="hint">
+                <strong>Подсказка:</strong> Скомбинируй <code>SELECT name FROM animes JOIN genres ON animes.genre_id = genres.genre_id</code> с <code>WHERE genre_name = 'Сёнен' AND price < 2000</code>.
+            </div>
+            <div class="hint">
+                <strong>Идеи:</strong> Попробуй добавить имя клиента к заказам или посчитать что-то!
+            </div>
+        </section>
+
+        <section id="summary">
+            <h2>📊 Итоги & Game Over</h2>
+            <p>Подсчитайте очки. Основные команды: <code>SELECT</code>, <code>FROM</code>, <code>WHERE</code>, <code>JOIN</code>, <code>GROUP BY</code>, <code>COUNT</code>. Победители — "S-Rank Отаку"!</p>
+            <p><strong>Домашка:</strong> Придумай 1 свой запрос и объясни, как он помогает магазину.</p>
+            <div class="hint">
+                <strong>Ресурсы:</strong> <a href="https://www.w3schools.com/sql/" target="_blank">W3Schools SQL</a>. Застряли? Спросите Владимира Игоревича, он сам ничего не знает, но постарается помочь!
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 АнимеТоп 90s Retro Shop. Insert Coin to Continue!</p>
+    </footer>
+    <div id="motto-text" style="position: fixed; bottom: 330px; right: 20px; color: #FFF; background: rgba(0,0,0,0.7); padding: 10px; border-radius: 10px; z-index: 1000; font-family: 'Press Start 2P', cursive; font-size: 0.8em; max-width: 200px; text-align: center; border: 2px solid #FF00FF; box-shadow: 0 0 10px #00FFFF; opacity: 0; transition: opacity 0.5s;"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/live2d-widget@3.1.4/lib/L2Dwidget.min.js"></script>
+    <script>
+        // Инициализация Live2D-виджета
+        L2Dwidget.init({
+            "model": {
+                "jsonPath": "https://cdn.jsdelivr.net/gh/evrstr/live2d-widget-models/live2d_evrstr/koharu/model.json"
+            },
+            "display": {
+                "position": "right",
+                "width": 150,
+                "height": 300,
+                "hOffset": 0,
+                "vOffset": 0
+            },
+            "mobile": {
+                "show": true,
+                "scale": 0.5,
+                "motion": true
+            }
+        });
+
+        // Массив с мотивирующими фразами
+        const mottos = [
+            "Давай, давай! Ты сможешь!",
+            "Верь в себя, зая, верь!",
+            "Эй! Не грусти! Просто сделай ещё одну попытку, и всё выйдет! 😊",
+            "Сегодня ты отаку, а завтра — SQL-мастер!",
+            "Каждый запрос — это шаг к победе!",
+            "Не сдавайся! я верю в тебя!",
+            "Аниме не бросают, и ты не бросай!",
+            "Ты круче, чем думаешь!",
+            "Ошибки — это часть пути к успеху!",
+            "Вперёд, к новым вершинам SQL!",
+            "Ты — герой своего квеста!",
+            "Каждый клик — это шаг к победе!",
+            "Ты — звезда этого ретро-шоу!",
+            "Ставь класс если  заметил вчера на стриме в Deepseek прикол",
+        ];
+
+        const textElement = document.getElementById('motto-text');
+
+        function showRandomMotto() {
+            const randomIndex = Math.floor(Math.random() * mottos.length);
+            textElement.textContent = mottos[randomIndex];
+            textElement.style.opacity = '1';
+
+            // Скрыть текст через 5 секунд
+            setTimeout(() => {
+                textElement.style.opacity = '0';
+            }, 5000);
+        }
+
+        // Показать первую фразу через 10 секунд после загрузки, затем повторять каждые 30 секунд
+        setTimeout(showRandomMotto, 5000);
+        setInterval(showRandomMotto, 15000);
+    </script>
+</body>
+</html>
