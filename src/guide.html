@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ПОЖИЛОЙ ГАЙД ОТ ГЛАДА ВАЛАКАСА</title>
+    <style>
+        body {
+            background-color: #F5F6F5; /* Мягкий серый фон */
+            color: #1C2526; /* Темно-синий текст для читаемости */
+            font-family: 'Arial', sans-serif; /* Современный шрифт */
+            margin: 0;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        header {
+            text-align: center;
+            background-color: #FFFFFF; /* Белый фон для заголовка */
+            color: #1C2526;
+            padding: 30px;
+            border-bottom: 3px solid #005566; /* Темно-бирюзовый акцент */
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        nav {
+            background-color: #E8ECEF; /* Светло-серый для навигации */
+            padding: 15px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        nav ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        nav ul li {
+            display: inline;
+            margin: 0 15px;
+        }
+        nav ul li a {
+            color: #005566;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s ease;
+        }
+        nav ul li a:hover {
+            color: #00A3AD; /* Бирюзовый для ховер */
+        }
+        section {
+            background-color: #FFFFFF;
+            border: 1px solid #E8ECEF;
+            margin: 20px 0;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+        h1, h2, h3 {
+            color: #005566; /* Темно-бирюзовый для заголовков */
+        }
+        h1 {
+            font-size: 2.5em;
+            margin: 0;
+        }
+        h2 {
+            font-size: 1.8em;
+            border-bottom: 2px solid #E8ECEF;
+            padding-bottom: 10px;
+        }
+        h3 {
+            font-size: 1.4em;
+        }
+        pre {
+            background-color: #E8ECEF; /* Светло-серый фон для кода */
+            color: #008000; /* Зеленый для кода */
+            padding: 15px;
+            border: 1px solid #D3D3D3;
+            border-radius: 5px;
+            overflow-x: auto;
+            position: relative;
+            font-size: 0.9em;
+            line-height: 1.4;
+        }
+        .copy-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: #005566;
+            color: #FFFFFF;
+            border: none;
+            padding: 8px 12px;
+            cursor: pointer;
+            border-radius: 3px;
+            font-size: 0.8em;
+            transition: background-color 0.3s ease;
+        }
+        .copy-btn:hover {
+            background-color: #00A3AD;
+        }
+        .fun-fact {
+            background-color: #F0F4F5; /* Легкий голубоватый фон для фактов */
+            border-left: 4px solid #00A3AD;
+            padding: 15px;
+            margin: 20px 0;
+            font-style: italic;
+            color: #1C2526;
+        }
+        footer {
+            text-align: center;
+            margin-top: 30px;
+            color: #666;
+            font-size: 0.9em;
+        }
+        a {
+            color: #00A3AD;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>RETRO RACING 90s JAPAN STYLE ДА НЕ УМЕР ОН В КОНЦЕ ДРАЙВА EDITION</h1>
+        <h2>Гайд по созданию гоночной игры от Глада Валакаса</h2>
+    </header>
+
+    <nav>
+        <ul>
+            <li><a href="#intro">Введение</a></li>
+            <li><a href="#setup">Настройка</a></li>
+            <li><a href="#car-class">Класс машины</a></li>
+            <li><a href="#game-loop">Игровой цикл</a></li>
+            <li><a href="#testing">Тестирование и запуск</a></li>
+            <li><a href="#improvements">Улучшения</a></li>
+            <li><a href="#final-code">Итоговый код</a></li>
+        </ul>
+    </nav>
+
+    <section id="intro">
+        <h2>Введение</h2>
+        <p>Здорово, пацаны и девчонки, это ваш Глад Валакас на связи! Сегодня мы замутим лютую гоночную игруху в стиле японских 90-х, прям как Initial D, на Python и Pygame! Будет как в старые добрые времена — с машинами, дрифтом и неоновым вайбом! Этот гайд для всех, кто хочет завести движок и рвануть с нуля, даже если ты в коде как я в молодости на танцполе — слегка потерянный, но с огоньком!</p>
+        <p><strong>Что надо для старта, братан:</strong></p>
+        <ul>
+            <li>Python 3.6+ — качай с <a href="https://python.org">python.org</a>, не трынди!</li>
+            <li>Pygame — врубай <code>pip install pygame</code> и не парься.</li>
+            <li>Картинки: track.png для трассы, 1.png и 9.png для тачек. Без них — как без бензина!</li>
+        </ul>
+    </section>
+
+    <div class="fun-fact">
+        <strong>Забавный факт от Глада:</strong> В 90-х Sega Rally делала машины "липкими" к трассе, чтоб комп не тужился. Хитро, как я, когда в гараже тачку на кирпичи ставил!
+    </div>
+
+    <section id="setup">
+        <h2>Настройка окружения</h2>
+        <p>Эй, пацаны, врубайтесь! Ща будем готовить гараж для нашей гонки. Это как перед заездом — надо движок прогреть, колёса подкачать!</p>
+        <h3>Шаг 1: Установите Python и Pygame</h3>
+        <p>Качай Python с <a href="https://python.org">сайта</a>, ставь, как нормальный пацан. Проверяй, что всё работает, в консоли вбивай:</p>
+        <pre><code>python --version</code><button class="copy-btn" onclick="copyCode(this)">Копировать</button></pre>
+        <p>Дальше Pygame — это как турбонаддув для игры. В консоли вбей:</p>
+        <pre><code>pip install pygame</code><button class="copy-btn" onclick="copyCode(this)">Копировать</button></pre>
+        <p>Если всё ок, ты готов к следующему этапу, как я к пельменям после работы!</p>
+        <h3>Шаг 2: Подготовьте ресурсы</h3>
+        <p>Нужны картинки: track.png для трассы и 1.png, 9.png для тачек. Машины делай примерно 37x75 пикселей после масштабирования — мелкие, но шустрые, как мой старый мопед! Кидай их в папку с кодом.</p>
+        <h3>Шаг 3: Создайте файл main.py</h3>
+        <p>Заводи файл <code>main.py</code> и вбей вот этот код, это как фундамент для гаража:</p>
+        <pre><code>import pygame
+import sys
+import math
+import os
+
+# Инициализация Pygame
+pygame.init()
+
+# Настройки окна
+SCREEN_WIDTH = 1800
+SCREEN_HEIGHT = 1000
+screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+pygame.display.set_caption("Гонки")
+
+# Цвета
+WHITE = (255, 255, 255)
+BLACK = (0, 0, 0)
+
+# Частота кадров
+FPS = 60
+clock = pygame.time.Clock()</code><button class="copy-btn" onclick="copyCode(this)">Копировать</button></pre>
+        <p><strong>Глад объясняет:</strong> Смотри, <code>import pygame, sys, math, os</code> — это как позвать бригаду механиков. <code>pygame.init()</code> — включаем движок Pygame. <code>screen = pygame.display.set_mode</code> — это твой экран 1800x1000, как здоровенный телевизор в гараже. <code>WHITE</code> и <code>BLACK</code> — цвета, как краска для тачки. <code>FPS = 60</code> — это чтобы игра не лагала, как мой старый комп на Windows 98!</p>
+    </section>
+
+    <div class="fun-fact">
+        <strong>Забавный факт от Глада:</strong> В Gran Turismo разрабы реально катались на тачках, чтобы записать, как шины визжат! Это как я, когда пытался пельмени на сковородке дрифтовать!
+    </div>
+
+    <section id="car-class">
+        <h2>Создание класса машины</h2>
+        <p>Ща замутим тачку, пацаны! Класс <code>Car</code> — это как чертёж для твоей "Тойоты" или "Ниссана". Будет дрифтовать, как в Initial D!</p>
+        <h3>Шаг 1: Определите класс Car</h3>
+        <p>Вбей код для создания тачки:</p>
+        <pre><code>class Car(pygame.sprite.Sprite):
+    def __init__(self, x, y, image_path):
+        super().__init__()
+        # Проверка наличия файла изображения
+        if not os.path.exists(image_path):
+            raise FileNotFoundError(f"Файл {image_path} не найден")
+        self.original_image = pygame.image.load(image_path).convert_alpha()
+        self.original_image = pygame.transform.scale(self.original_image, (37, 75))
+        self.image = self.original_image
+        self.rect = self.image.get_rect(center=(x, y))
+        
+        self.speed = 0
+        self.max_speed = 10
+        self.acceleration = 0.15
+        self.deceleration = 0.15 / 10
+        self.angle = 0
+        self.rotation_speed = 5 / 2</code><button class="copy-btn" onclick="copyCode(this)">Копировать</button></pre>
+        <p><strong>Глад объясняет:</strong> Смотри, <code>class Car(pygame.sprite.Sprite)</code> — это как сказать: "Эй, тачка, ты теперь спрайт, будешь красиво ездить!" <code>__init__</code> — это где мы задаём координаты <code>x, y</code> и картинку <code>image_path</code>. Проверяем, есть ли файл, а то без тачки не погоняешь! <code>pygame.image.load</code> загружает картинку, <code>transform.scale</code> делает её компактной, как мой старый гараж. <code>speed</code>, <code>acceleration</code>, <code>angle</code> — это как газ, тормоз и руль, всё для дрифта!</p>
+        <h3>Шаг 2: Реализуйте метод update</h3>
+        <p>Теперь добавим управление, чтобы тачка гоняла:</p>
+        <pre><code>    def update(self, keys, control_type):
+        # Изменение скорости (ускорение и торможение)
+        if control_type == "wasd":
+            if keys[pygame.K_w]:
+                self.speed = min(self.speed + self.acceleration, self.max_speed)
+            elif keys[pygame.K_s]:
+                self.speed = max(self.speed - self.acceleration, -self.max_speed / 2)
+            else:
+                if self.speed > 0:
+                    self.speed = max(self.speed - self.deceleration, 0)
+                elif self.speed < 0:
+                    self.speed = min(self.speed + self.deceleration, 0)
+        
+        elif control_type == "arrows":
+            if keys[pygame.K_UP]:
+                self.speed = min(self.speed + self.acceleration, self.max_speed)
+            elif keys[pygame.K_DOWN]:
+                self.speed = max(self.speed - self.acceleration, -self.max_speed / 2)
+            else:
+                if self.speed > 0:
+                    self.speed = max(self.speed - self.deceleration, 0)
+                elif self.speed < 0:
+                    self.speed = min(self.speed + self.deceleration, 0)
+
+        # Поворот (разрешён всегда)
+        if control_type == "wasd":
+            if keys[pygame.K_a]:
+                self.angle += self.rotation_speed
+            if keys[pygame.K_d]:
+                self.angle -= self.rotation_speed
+        elif control_type == "arrows":
+            if keys[pygame.K_LEFT]:
+                self.angle += self.rotation_speed
+            if keys[pygame.K_RIGHT]:
+                self.angle -= self.rotation_speed
+        
+        # Обновление положения на основе скорости и угла
+        if abs(self.speed) > 0:
+            self.rect.x += self.speed * math.cos(math.radians(self.angle + 90))
+            self.rect.y -= self.speed * math.sin(math.radians(self.angle + 90))
+
+        # Вращение изображения
+        self.image = pygame.transform.rotate(self.original_image, self.angle)
+        self.rect = self.image.get_rect(center=self.rect.center)
+        
+        # Ограничение по экрану
+        self.rect.clamp_ip(screen.get_rect())</code><button class="copy-btn" onclick="copyCode(this)">Копировать</button></pre>
+        <p><strong>Глад объясняет:</strong> Ох, пацаны, тут движуха! <code>update</code> — это как руль и педали в одном. Если жмёшь <code>W</code> или стрелку вверх — тачка разгоняется, <code>S</code> или вниз — тормозит. <code>A</code>, <code>D</code> или стрелки влево-вправо крутят руль. <code>math.cos</code> и <code>math.sin</code> — это как рассчитать, куда тачка поедет, прям как я в молодости, когда пытался в физику на уроках! <code>transform.rotate</code> вертит картинку, чтоб тачка красиво дрифтовала, а <code>clamp_ip</code> не даёт свалить за экран, как я однажды с трассы на мопеде!</p>
+    </section>
+
+    <div class="fun-fact">
+        <strong>Забавный факт от Глада:</strong> В Need for Speed: Underground неон под тачками был такой модный, что я чуть под свой Жигуль лампочки не прикрутил! Всё из японской уличной движухи 2000-х!
+    </div>
+
+    <section id="game-loop">
+        <h2>Создание игрового цикла</h2>
+        <p>Пацаны, игровой цикл — это как сердце движка, бьётся и всё крутит! Без него игра — как тачка без бензина.</p>
+        <h3>Шаг 1: Загрузка трассы и создание машин</h3>
+        <p>Врубай функцию <code>game_loop</code> и грузи трассу с тачками:</p>
+        <pre><code>def game_loop():
+    # Проверка наличия файла трассы
+    track_path = "track.png"
+    if not os.path.exists(track_path):
+        raise FileNotFoundError(f"Файл {track_path} не найден")
+    
+    # Загружаем изображение трассы
+    track_image = pygame.image.load(track_path).convert_alpha()
+    track_image = pygame.transform.scale(track_image, (SCREEN_WIDTH, SCREEN_HEIGHT))
+
+    # Создание машинок
+    try:
+        car1 = Car(SCREEN_WIDTH // 8, SCREEN_HEIGHT // 2, "1.png")
+        car2 = Car(SCREEN_WIDTH // 6, SCREEN_HEIGHT // 2, "9.png")
+    except FileNotFoundError as e:
+        print(e)
+        pygame.quit()
+        return
+
+    all_sprites = pygame.sprite.Group()
+    all_sprites.add(car1, car2)</code><button class="copy-btn" onclick="copyCode(this)">Копировать</button></pre>
+        <p><strong>Глад объясняет:</strong> Тут мы грузим трассу <code>track.png</code> — это как асфальт на твоей улице. Проверяем, что файл есть, а то без трассы — как без пельменей на ужин! <code>Car</code> создаёт две тачки, ставим их рядом, как на старте в Initial D. <code>all_sprites</code> — это как гараж, где все тачки в куче, чтобы их разом рисовать.</p>
+        <h3>Шаг 2: Добавьте шрифт и основной цикл</h3>
+        <p>Кидаем шрифт для скорости и главный цикл:</p>
+        <pre><code>    # Инициализация шрифта с поддержкой кириллицы
+    try:
+        font = pygame.font.SysFont("arial", 36)
+    except:
+        font = pygame.font.Font(None, 36)
+
+    running = True
+    while running:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+        
+        keys = pygame.key.get_pressed()
+        
+        # Обновляем положение машинок
+        car1.update(keys, "wasd")
+        car2.update(keys, "arrows")
+        
+        # Отрисовываем трассу на экране
+        screen.blit(track_image, (0, 0))
+        
+        # Отрисовываем машинки
+        all_sprites.draw(screen)
+
+        # Отображение скорости первой машинки
+        speed_text1 = f"Скорость 1: {car1.speed:.2f}"
+        text_surface1 = font.render(speed_text1, True, BLACK)
+        screen.blit(text_surface1, (10, 10))
+
+        # Отображение скорости второй машинки
+        speed_text2 = f"Скорость 2: {car2.speed:.2f}"
+        text_surface2 = font.render(speed_text2, True, BLACK)
+        screen.blit(text_surface2, (SCREEN_WIDTH - text_surface2.get_width() - 10, 10))
+        
+        pygame.display.flip()
+        clock.tick(FPS)</code><button class="copy-btn" onclick="copyCode(this)">Копировать</button></pre>
+        <p><strong>Глад объясняет:</strong> <code>font</code> — это как наклейка со спидометром, показывает, как быстро ты гонишь. <code>while running</code> — это как крутить педали без остановки. Проверяем, не закрыл ли ты окно (<code>pygame.QUIT</code>), а то всё, гонка окончена! <code>keys</code> ловит, что ты жмёшь, и обновляет тачки. <code>screen.blit</code> рисует трассу и тачки, а <code>pygame.display.flip</code> — как сказать: "Эй, комп, покажи картинку!" <code>clock.tick(FPS)</code> держит 60 кадров, чтоб не лагало, как мой старый видик!</p>
+        <h3>Шаг 3: Запустите цикл</h3>
+        <p>Врубай игруху:</p>
+        <pre><code>if __name__ == "__main__":
+    try:
+        game_loop()
+    except Exception as e:
+        print(f"Произошла ошибка: {e}")
+        pygame.quit()</code><button class="copy-btn" onclick="copyCode(this)">Копировать</button></pre>
+        <p><strong>Глад объясняет:</strong> <code>if __name__ == "__main__"</code> — это как ключ зажигания, запускает <code>game_loop</code>. <code>try-except</code> ловит косяки, если что-то пошло не так, как когда я пытался движок от Жигуля на мопед прикрутить!</p>
+    </section>
+
+    <div class="fun-fact">
+        <strong>Забавный факт от Глада:</strong> В OutRun трассы генерились на лету, потому что памяти в аркадах было меньше, чем в моём старом калькуляторе! И всё равно было круто!
+    </div>
+
+    <section id="testing">
+        <h2>Тестирование и запуск</h2>
+        <p>Всё, пацаны, пора гнать! Твоя игра готова к заезду!</p>
+        <ol>
+            <li>Кидай файлы <code>track.png</code>, <code>1.png</code>, <code>9.png</code> в папку с <code>main.py</code>.</li>
+            <li>Врубай: <code>python main.py</code></li>
+            <li><strong>Управление:</strong>
+                <ul>
+                    <li>Машина 1: WASD (W — газ, S — тормоз, A — влево, D — вправо)</li>
+                    <li>Машина 2: Стрелки (вверх — газ, вниз — тормоз, влево/вправо — руль)</li>
+                </ul>
+            </li>
+            <li>Закрываешь окно — гонка финиш!</li>
+        </ol>
+        <p><strong>Глад объясняет:</strong> Это как завести тачку и рвануть! Если картинки на месте, всё поедет. Управление — как в аркадах, жми и дрифтуй, как я на своём Жигуле в молодости!</p>
+    </section>
+
+    <div class="fun-fact">
+        <strong>Забавный факт от Глада:</strong> В Colin McRae Rally разрабы записывали звуки моторов с настоящих тачек! Это как я, когда пытался пельмени жарить, а они шипели, как движок!
+    </div>
+
+    <section id="improvements">
+        <h2>Улучшения и доработки</h2>
+        <p>Хочешь сделать игруху ещё круче? Вот пара идей, как тюнинговать тачку!</p>
+        <ul>
+            <li><strong>Столкновения:</strong> Кидай <code>pygame.sprite.collide_rect(car1, car2)</code>, чтоб тачки бились, как в настоящей гонке!</li>
+            <li><strong>Физика:</strong> Добавь трение или дрифт, чтоб как в Initial D!</li>
+            <li><strong>Трасса:</strong> Врубай <code>pygame.mask.from_surface</code> для коллизий с дорогой.</li>
+            <li><strong>Счётчик кругов:</strong> Замути контрольные точки, как на ралли!</li>
+            <li><strong>Графика:</strong> Звуки мотора, дым, искры — как неон на моей тачке в 90-х!</li>
+        </ul>
+        <p>Пример для столкновений:</p>
+        <pre><code>if pygame.sprite.collide_rect(car1, car2):
+    car1.speed *= 0.5
+    car2.speed *= 0.5</code><button class="copy-btn" onclick="copyCode(this)">Копировать</button></pre>
+        <p><strong>Глад объясняет:</strong> <code>collide_rect</code> — это как бампер в бампер! Если тачки стукнулись, скорость падает, как мой энтузиазм, когда пельмени кончились. Остальные идеи — это как прикрутить спойлер или заниженную подвеску, делай и будешь король трассы!</p>
+    </section>
+
+    <div class="fun-fact">
+        <strong>Забавный факт от Глада:</strong> В F-Zero на SNES был Mode 7, делал трассы как 3D, хотя всё плоское! Это как я в 90-х пытался в зеркале выглядеть моложе!
+    </div>
+
+    <section id="final-code">
+        <h2>Итоговый код</h2>
+        <p>Вот тебе, пацан, весь код в одном флаконе! Это как полностью собранная тачка, готова к заезду. Кидай в <code>main.py</code>, грузи картинки и врубай движок!</p>
+        <pre><code>import pygame
+import sys
+import math
+import os
+
+# Инициализация Pygame
+pygame.init()
+
+# Настройки окна
+SCREEN_WIDTH = 1800
+SCREEN_HEIGHT = 1000
+screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+pygame.display.set_caption("Гонки")
+
+# Цвета
+WHITE = (255, 255, 255)
+BLACK = (0, 0, 0)
+
+# Частота кадров
+FPS = 60
+clock = pygame.time.Clock()
+
+# Класс для машинки
+class Car(pygame.sprite.Sprite):
+    def __init__(self, x, y, image_path):
+        super().__init__()
+        # Проверка наличия файла изображения
+        if not os.path.exists(image_path):
+            raise FileNotFoundError(f"Файл {image_path} не найден")
+        self.original_image = pygame.image.load(image_path).convert_alpha()
+        self.original_image = pygame.transform.scale(self.original_image, (37, 75))
+        self.image = self.original_image
+        self.rect = self.image.get_rect(center=(x, y))
+        
+        self.speed = 0
+        self.max_speed = 10
+        self.acceleration = 0.15   # Увеличено для более отзывчивого управления
+        self.deceleration = 0.15 / 10  # Увеличено для более плавного торможения
+        self.angle = 0 
+        self.rotation_speed = 5 / 2
+    
+    def update(self, keys, control_type):
+        # Изменение скорости (ускорение и торможение)
+        if control_type == "wasd":
+            if keys[pygame.K_w]:
+                self.speed = min(self.speed + self.acceleration, self.max_speed)
+            elif keys[pygame.K_s]:
+                self.speed = max(self.speed - self.acceleration, -self.max_speed / 2)
+            else:
+                if self.speed > 0:
+                    self.speed = max(self.speed - self.deceleration, 0)
+                elif self.speed < 0:
+                    self.speed = min(self.speed + self.deceleration, 0)
+        
+        elif control_type == "arrows":
+            if keys[pygame.K_UP]:
+                self.speed = min(self.speed + self.acceleration, self.max_speed)
+            elif keys[pygame.K_DOWN]:
+                self.speed = max(self.speed - self.acceleration, -self.max_speed / 2)
+            else:
+                if self.speed > 0:
+                    self.speed = max(self.speed - self.deceleration, 0)
+                elif self.speed < 0:
+                    self.speed = min(self.speed + self.deceleration, 0)
+
+        # Поворот (разрешён всегда)
+        if control_type == "wasd":
+            if keys[pygame.K_a]:
+                self.angle += self.rotation_speed
+            if keys[pygame.K_d]:
+                self.angle -= self.rotation_speed
+        elif control_type == "arrows":
+            if keys[pygame.K_LEFT]:
+                self.angle += self.rotation_speed
+            if keys[pygame.K_RIGHT]:
+                self.angle -= self.rotation_speed
+        
+        # Обновление положения на основе скорости и угла
+        if abs(self.speed) > 0:  # Движение только при ненулевой скорости
+            self.rect.x += self.speed * math.cos(math.radians(self.angle + 90))
+            self.rect.y -= self.speed * math.sin(math.radians(self.angle + 90))
+
+        # Вращение изображения
+        self.image = pygame.transform.rotate(self.original_image, self.angle)
+        self.rect = self.image.get_rect(center=self.rect.center)
+        
+        # Ограничение по экрану
+        self.rect.clamp_ip(screen.get_rect())  # Упрощённое ограничение движения
+
+# Главный игровой цикл
+def game_loop():
+    # Проверка наличия файла трассы
+    track_path = "track.png"
+    if not os.path.exists(track_path):
+        raise FileNotFoundError(f"Файл {track_path} не найден")
+    
+    # Загружаем изображение трассы
+    track_image = pygame.image.load(track_path).convert_alpha()
+    track_image = pygame.transform.scale(track_image, (SCREEN_WIDTH, SCREEN_HEIGHT))
+
+    # Создание машинок
+    try:
+        car1 = Car(SCREEN_WIDTH // 8, SCREEN_HEIGHT // 2, "1.png")
+        car2 = Car(SCREEN_WIDTH // 6, SCREEN_HEIGHT // 2, "9.png")
+    except FileNotFoundError as e:
+        print(e)
+        pygame.quit()
+        return
+
+    all_sprites = pygame.sprite.Group()
+    all_sprites.add(car1, car2)
+
+    # Инициализация шрифта с поддержкой кириллицы
+    try:
+        font = pygame.font.SysFont("arial", 36)  # Arial обычно поддерживает кириллицу
+    except:
+        font = pygame.font.Font(None, 36)  # Запасной вариант
+
+    running = True
+    while running:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+        
+        keys = pygame.key.get_pressed()
+        
+        # Обновляем положение машинок
+        car1.update(keys, "wasd")
+        car2.update(keys, "arrows")
+        
+        # Отрисовываем трассу на экране
+        screen.blit(track_image, (0, 0))
+        
+        # Отрисовываем машинки
+        all_sprites.draw(screen)
+
+        # Отображение скорости первой машинки
+        speed_text1 = f"Скорость 1: {car1.speed:.2f}"
+        text_surface1 = font.render(speed_text1, True, BLACK)
+        screen.blit(text_surface1, (10, 10))
+
+        # Отображение скорости второй машинки
+        speed_text2 = f"Скорость 2: {car2.speed:.2f}"
+        text_surface2 = font.render(speed_text2, True, BLACK)
+        screen.blit(text_surface2, (SCREEN_WIDTH - text_surface2.get_width() - 10, 10))
+        
+        pygame.display.flip()
+        clock.tick(FPS)  # Ограничение FPS
+
+    pygame.quit()
+
+if __name__ == "__main__":
+    try:
+        game_loop()
+    except Exception as e:
+        print(f"Произошла ошибка: {e}")
+        pygame.quit()</code><button class="copy-btn" onclick="copyCode(this)">Копировать</button></pre>
+        <p><strong>Глад объясняет:</strong> Это твой готовый болид, пацаны! Всё в одном — как полный бак бензина и пельмени на пассажирском сиденье. Кидай этот код в <code>main.py</code>, грузи картинки и гони, как я в 90-х на Жигулях! Если что-то не едет, проверь, все ли файлы на месте, или пиши Гладу, разберёмся!</p>
+    </section>
+
+    <footer>
+        © 2025 Retro Racing  90s Japan Style. Keep Drifting, пацаны!
+    </footer>
+
+    <script>
+        function copyCode(button) {
+            const code = button.previousElementSibling.innerText;
+            navigator.clipboard.writeText(code).then(() => {
+                button.innerText = 'Скопировано!';
+                setTimeout(() => button.innerText = 'Копировать', 2000);
+            });
+        }
+    </script>
+
+</body>
+</html>
