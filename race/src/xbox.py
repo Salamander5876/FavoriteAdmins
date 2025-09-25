@@ -30,7 +30,7 @@ class Car(pygame.sprite.Sprite):
         if not os.path.exists(image_path):
             raise FileNotFoundError(f"Файл {image_path} не найден")
         self.original_image = pygame.image.load(image_path).convert_alpha()
-        self.original_image = pygame.transform.scale(self.original_image, (27, 65))
+        self.original_image = pygame.transform.scale(self.original_image, (37, 75))
         self.image = self.original_image
         self.rect = self.image.get_rect(center=(x, y))
 
