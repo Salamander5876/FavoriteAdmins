@@ -6,6 +6,7 @@ import random
 from PIL import Image
 import io
 import numpy as np
+import sqlite3
 
 # Инициализация Pygame
 pygame.init()
@@ -106,6 +107,21 @@ AVAILABLE_MUSIC = sorted([
     if f.lower().endswith('.mp3')
 ]) if os.path.isdir(MUSIC_FOLDER) else []
 MUSIC_PATHS = [os.path.join(MUSIC_FOLDER, music_file) for music_file in AVAILABLE_MUSIC]
+
+# Инициализация базы данных
+DB_NAME = "racing_scores.db"
+conn = sqlite3.connect(DB_NAME)
+cursor = conn.cursor()
+cursor.execute('''
+CREATE TABLE IF NOT EXISTS scores (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL,
+    time REAL NOT NULL,
+    laps INTEGER NOT NULL,
+    controller TEXT NOT NULL
+)
+''')
+conn.commit()
 
 class Car(pygame.sprite.Sprite):
     def __init__(self, x, y, image_path, map_data, tile_size, player_id):
@@ -320,6 +336,46 @@ def draw_button(surface, rect, text, font, color, text_color, is_active, hover=F
     pygame.draw.rect(surface, COLORS['WHITE'], rect, 2, border_radius=12)
     draw_text(surface, text, font, text_color, rect.centerx, rect.centery, True, True)
 
+def show_leaderboard():
+    cursor.execute("SELECT name, time, laps, controller FROM scores ORDER BY time ASC LIMIT 10")
+    scores = cursor.fetchall()
+    
+    overlay = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SRCALPHA)
+    overlay.fill((0, 0, 0, 150))
+    
+    board_rect = pygame.Rect(SCREEN_WIDTH // 2 - 300, SCREEN_HEIGHT // 2 - 200, 600, 400)
+    pygame.draw.rect(overlay, (30, 30, 30, 255), board_rect, border_radius=20)
+    pygame.draw.rect(overlay, COLORS['WHITE'], board_rect, 2, border_radius=20)
+    
+    draw_text(overlay, "Рейтинг", fonts['large'], COLORS['YELLOW'], board_rect.centerx, board_rect.y + 20, True, True)
+    
+    if not scores:
+        draw_text(overlay, "Нет записей", fonts['medium'], COLORS['WHITE'], board_rect.centerx, board_rect.centery, True, True)
+    else:
+        for i, (name, time, laps, controller) in enumerate(scores):
+            y = board_rect.y + 60 + i * 30
+            draw_text(overlay, f"{i+1}. {name} - {time:.2f} сек, {laps} кругов, {controller}", fonts['medium'], COLORS['WHITE'], board_rect.x + 20, y, shadow=True)
+    
+    close_button_rect = pygame.Rect(board_rect.right - 40, board_rect.top, 30, 30)
+    draw_button(overlay, close_button_rect, "X", fonts['medium'], COLORS['RED'], COLORS['WHITE'], False)
+    
+    screen.blit(overlay, (0, 0))
+    pygame.display.flip()
+    
+    waiting = True
+    while waiting:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if close_button_rect.collidepoint(event.pos):
+                    waiting = False
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    waiting = False
+        clock.tick(FPS)
+
 def main_menu():
     show_loading_screen()
     
@@ -336,32 +392,35 @@ def main_menu():
         joystick.init()
 
     player_settings = [
-        {"car_index": 0, "control": "wasd", "active": True},
-        {"car_index": 1 % len(CAR_PATHS), "control": "arrows", "active": False},
-        {"car_index": 2 % len(CAR_PATHS), "control": "xbox", "active": False}
+        {"car_index": 0, "control": "wasd", "active": True, "name": "Игрок1"},
+        {"car_index": 1 % len(CAR_PATHS), "control": "arrows", "active": False, "name": "Игрок2"},
+        {"car_index": 2 % len(CAR_PATHS), "control": "xbox", "active": False, "name": "Игрок3"}
     ]
     num_players = 1
     laps_to_win = 3
-    hover_states = {'start': False, 'players': [False] * 3, 'controls': [{} for _ in range(3)], 'cars': [False, False] * 3, 'laps': [False, False]}
+    hover_states = {'start': False, 'leaderboard': False, 'players': [False] * 3, 'controls': [{} for _ in range(3)], 'cars': [False, False] * 3, 'laps': [False, False]}
+    input_active = [False] * 3
 
     start_button_rect = pygame.Rect(SCREEN_WIDTH // 2 - 90, SCREEN_HEIGHT - 80, 180, 45)
+    leaderboard_button_rect = pygame.Rect(SCREEN_WIDTH // 2 - 90, SCREEN_HEIGHT - 140, 180, 45)
     player_buttons_rects = [pygame.Rect(SCREEN_WIDTH // 2 - 90 + i * 60, 120, 50, 30) for i in range(3)]
     laps_controls_y = 160
     laps_prev_rect = pygame.Rect(SCREEN_WIDTH // 2 + 60, laps_controls_y, 30, 30)
     laps_next_rect = pygame.Rect(SCREEN_WIDTH // 2 + 100, laps_controls_y, 30, 30)
 
     menu_width = 1100
-    player_row_height = 140
+    player_row_height = 160  # Увеличено для поля имени
     menu_x = (SCREEN_WIDTH - menu_width) // 2
     setting_rows = [
         {
             "label_rect": pygame.Rect(menu_x + 25, 220 + i * player_row_height, 90, 30),
-            "car_prev_rect": pygame.Rect(menu_x + 130, 220 + i * player_row_height, 50, 100),
-            "prev_car_rect": pygame.Rect(menu_x + 100, 260 + i * player_row_height, 30, 30),
-            "next_car_rect": pygame.Rect(menu_x + 190, 260 + i * player_row_height, 30, 30),
-            "control_wasd_rect": pygame.Rect(menu_x + 260, 240 + i * player_row_height, 90, 30),
-            "control_arrows_rect": pygame.Rect(menu_x + 360, 240 + i * player_row_height, 90, 30),
-            "control_xbox_rect": pygame.Rect(menu_x + 460, 240 + i * player_row_height, 90, 30),
+            "name_rect": pygame.Rect(menu_x + 25, 250 + i * player_row_height, 200, 30),
+            "car_prev_rect": pygame.Rect(menu_x + 250, 220 + i * player_row_height, 50, 100),
+            "prev_car_rect": pygame.Rect(menu_x + 220, 260 + i * player_row_height, 30, 30),
+            "next_car_rect": pygame.Rect(menu_x + 310, 260 + i * player_row_height, 30, 30),
+            "control_wasd_rect": pygame.Rect(menu_x + 380, 240 + i * player_row_height, 90, 30),
+            "control_arrows_rect": pygame.Rect(menu_x + 480, 240 + i * player_row_height, 90, 30),
+            "control_xbox_rect": pygame.Rect(menu_x + 580, 240 + i * player_row_height, 90, 30),
         } for i in range(3)
     ]
 
@@ -369,6 +428,7 @@ def main_menu():
     while running:
         mouse_pos = pygame.mouse.get_pos()
         hover_states['start'] = start_button_rect.collidepoint(mouse_pos)
+        hover_states['leaderboard'] = leaderboard_button_rect.collidepoint(mouse_pos)
         for i, rect in enumerate(player_buttons_rects):
             hover_states['players'][i] = rect.collidepoint(mouse_pos)
         hover_states['laps'] = [laps_prev_rect.collidepoint(mouse_pos), laps_next_rect.collidepoint(mouse_pos)]
@@ -395,6 +455,10 @@ def main_menu():
                             
                 for i in range(num_players):
                     row = setting_rows[i]
+                    if row["name_rect"].collidepoint(mouse_pos):
+                        input_active[i] = True
+                    else:
+                        input_active[i] = False
                     if row["prev_car_rect"].collidepoint(mouse_pos):
                         player_settings[i]["car_index"] = (player_settings[i]["car_index"] - 1) % len(CAR_PATHS)
                     elif row["next_car_rect"].collidepoint(mouse_pos):
@@ -416,7 +480,8 @@ def main_menu():
                         {
                             "car_path": CAR_PATHS[player_settings[i]["car_index"]],
                             "control": player_settings[i]["control"],
-                            "joystick": joystick if player_settings[i]["control"] == "xbox" else None
+                            "joystick": joystick if player_settings[i]["control"] == "xbox" else None,
+                            "name": player_settings[i]["name"]
                         } for i in range(num_players) if player_settings[i]["active"]
                     ]
                     controls_used = [config["control"] for config in game_config]
@@ -424,9 +489,22 @@ def main_menu():
                         print("Управление не может быть назначено нескольким игрокам!")
                     else:
                         return game_config, laps_to_win
+                
+                if leaderboard_button_rect.collidepoint(mouse_pos):
+                    show_leaderboard()
+            
+            if event.type == pygame.KEYDOWN:
+                for i in range(3):
+                    if input_active[i]:
+                        if event.key == pygame.K_BACKSPACE:
+                            player_settings[i]["name"] = player_settings[i]["name"][:-1]
+                        elif event.key == pygame.K_RETURN:
+                            input_active[i] = False
+                        else:
+                            player_settings[i]["name"] += event.unicode
 
         screen.fill(COLORS['DARK_GRAY'])
-        pygame.draw.rect(screen, (30, 30, 30, 200), (menu_x, 80, menu_width, SCREEN_HEIGHT - 160), border_radius=20)
+        pygame.draw.rect(screen, (30, 30, 30, 200), (menu_x, 80, menu_width, SCREEN_HEIGHT - 200), border_radius=20)
         screen.blit(static_texts['title'], (SCREEN_WIDTH // 2 - static_texts['title'].get_width() // 2, 40))
         screen.blit(static_texts['players'], (SCREEN_WIDTH // 2 - 130, 120))
         
@@ -448,13 +526,16 @@ def main_menu():
                 continue
 
             draw_text(screen, f"Игрок {i+1}:", fonts['medium'], COLORS['WHITE'], row["label_rect"].x, row["label_rect"].y, shadow=True)
+            pygame.draw.rect(screen, COLORS['LIGHT_GRAY'], row["name_rect"], border_radius=5)
+            name_text = player_settings[i]["name"] + ("|" if input_active[i] else "")
+            draw_text(screen, name_text, fonts['medium'], COLORS['BLACK'], row["name_rect"].x + 5, row["name_rect"].y + 5)
             current_car_path = CAR_PATHS[player_settings[i]["car_index"]]
             car_rect = car_previews[current_car_path].get_rect(center=row["car_prev_rect"].center)
             pygame.draw.rect(screen, COLORS['BLACK'], car_rect.inflate(8, 8), border_radius=10)
             screen.blit(car_previews[current_car_path], car_rect)
             draw_button(screen, row["prev_car_rect"], "<", fonts['medium'], COLORS['LIGHT_GRAY'], COLORS['WHITE'], False, hover_states['cars'][i*2])
             draw_button(screen, row["next_car_rect"], ">", fonts['medium'], COLORS['LIGHT_GRAY'], COLORS['WHITE'], False, hover_states['cars'][i*2+1])
-            draw_text(screen, "Управление:", fonts['medium'], COLORS['WHITE'], menu_x + 260, row["label_rect"].y, shadow=True)
+            draw_text(screen, "Управление:", fonts['medium'], COLORS['WHITE'], menu_x + 380, row["label_rect"].y, shadow=True)
             draw_button(screen, row["control_wasd_rect"], "WASD", fonts['medium'], COLORS['LIGHT_GRAY'], COLORS['WHITE'], 
                        player_settings[i]["control"] == "wasd", hover_states['controls'][i]['wasd'])
             draw_button(screen, row["control_arrows_rect"], "Стрелки", fonts['medium'], COLORS['LIGHT_GRAY'], COLORS['WHITE'], 
@@ -465,15 +546,20 @@ def main_menu():
                 draw_text(screen, "Нет джойстика!", fonts['small'], COLORS['RED'], row["control_xbox_rect"].x, row["control_xbox_rect"].y + 35, shadow=True)
 
         draw_button(screen, start_button_rect, "Начать игру", fonts['large'], COLORS['GREEN'], COLORS['WHITE'], True, hover_states['start'])
+        draw_button(screen, leaderboard_button_rect, "Рейтинг", fonts['large'], COLORS['BLUE'], COLORS['WHITE'], True, hover_states['leaderboard'])
         pygame.display.flip()
         clock.tick(FPS)
         
     return [], 0
 
-def victory_screen(winner_id, winner_control_type):
+def victory_screen(winner_id, winner_control_type, winner_name, elapsed_time, laps_to_win):
+    cursor.execute("INSERT INTO scores (name, time, laps, controller) VALUES (?, ?, ?, ?)",
+                   (winner_name, elapsed_time, laps_to_win, winner_control_type))
+    conn.commit()
+    
     show_loading_screen()
     
-    text_surface = fonts['large'].render(f"ПОБЕДА! Игрок {winner_id} ({winner_control_type.upper()})", True, COLORS['YELLOW'])
+    text_surface = fonts['large'].render(f"ПОБЕДА! {winner_name} ({winner_control_type.upper()}) - {elapsed_time:.2f} сек", True, COLORS['YELLOW'])
     text_rect = text_surface.get_rect(center=(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 - 30))
     button_rect = pygame.Rect(SCREEN_WIDTH // 2 - 120, SCREEN_HEIGHT // 2 + 60, 240, 45)
     
@@ -513,6 +599,7 @@ def game_loop(game_config, laps_to_win):
         car = Car(spawn_points[i][0], spawn_points[i][1], config["car_path"], map_data, tile_size, i + 1)
         car.control_type = config["control"]
         car.joystick = config["joystick"]
+        car.name = config["name"]
         cars.add(car)
 
     current_music = random.choice(MUSIC_PATHS) if MUSIC_PATHS else None
@@ -524,6 +611,8 @@ def game_loop(game_config, laps_to_win):
     music_text_surface = fonts['small'].render(f"Играет: {music_name}", True, COLORS['YELLOW'])
     music_text_x = SCREEN_WIDTH
     music_text_speed = -2
+    
+    start_time = pygame.time.get_ticks()
     
     hud_surface = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SRCALPHA)
     map_surface = pygame.Surface((map_width * tile_size, map_height * tile_size))
@@ -539,6 +628,9 @@ def game_loop(game_config, laps_to_win):
 
     running = True
     while running:
+        current_time = pygame.time.get_ticks()
+        elapsed_time = (current_time - start_time) / 1000
+        
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.mixer.music.stop()
@@ -549,7 +641,7 @@ def game_loop(game_config, laps_to_win):
             car.update(keys, car.joystick, car.control_type)
             if car.laps >= laps_to_win:
                 pygame.mixer.music.stop()
-                victory_screen(car.player_id, car.control_type)
+                victory_screen(car.player_id, car.control_type, car.name, elapsed_time, laps_to_win)
                 return
 
         handle_collisions(cars.sprites())
@@ -573,6 +665,7 @@ def game_loop(game_config, laps_to_win):
         if music_text_x < -music_text_surface.get_width():
             music_text_x = SCREEN_WIDTH
         draw_text(hud_surface, f"Играет: {music_name}", fonts['small'], COLORS['YELLOW'], music_text_x, 15, shadow=True)
+        draw_text(hud_surface, f"Время: {elapsed_time:.2f} сек", fonts['small'], COLORS['YELLOW'], music_text_x, 35, shadow=True)
 
         screen.blit(hud_surface, (0, 0))
         pygame.display.flip()
@@ -590,4 +683,5 @@ if __name__ == "__main__":
         print(f"Произошла ошибка: {e}")
     finally:
         pygame.mixer.music.stop()
+        conn.close()
         pygame.quit()
